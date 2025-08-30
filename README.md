@@ -24,7 +24,7 @@ Welcome to the **Deepfake Detection Web Application** — a blazing-fast, AI-pow
 ## 🔗 Quick Access
 
 - [`Updated_Training_Notebook_Final.ipynb`](./Updated_Training_Notebook_Final.ipynb) — Full training & evaluation workflow
-- [`app.py`](./app.py) — The Streamlit web interface
+- [`gan_deterctor.py`](./gan_detector.py) — The Streamlit web interface
 - [`models/`](./models) — Pretrained model checkpoints
 - [`data/`](./data) — Your dataset root (see structure below)
 - [`requirements.txt`](./requirements.txt) — All required Python packages
