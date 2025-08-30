@@ -1,52 +1,59 @@
-# GAN Image Detector — README
+# 🕵️‍♂️ Deepfake Detection Web Application 🎨✨
 
-> **Project:** Detection of GAN-Generated Images using MobileNetV3-Large and Streamlit frontend
-
-This README gives step-by-step instructions to set up the environment, prepare data, train the MobileNetV3-Large detector, evaluate results, and run the Streamlit web app for inference.
+**Detect GAN-Generated (Deepfake) Images Instantly with MobileNetV3-Large & Streamlit**
 
 ---
 
-## Overview
-
-A lightweight MobileNetV3-Large based classifier is used to distinguish real images from GAN-generated images. The project includes a training notebook, evaluation utilities, and a Streamlit front-end so users can upload an image and get an authenticity prediction.
-
-![Streamlit UI Example](images/app.png)
+<p align="center">
+  <img src="images/app.png" alt="Streamlit UI Example" width="600"/>
+</p>
 
 ---
 
-## Quick links
+## 🚀 What is This Project?
 
-* `Updated_Training_Notebook_Final.ipynb` — Jupyter Notebook for training and evaluation
-* `app.py` — Streamlit frontend
-* `models/` — saved model checkpoints
-* `data/` — dataset root (structure described below)
-* `requirements.txt` — Python dependencies
+Welcome to the **Deepfake Detection Web Application** — a blazing-fast, AI-powered tool to **spot GAN-generated (deepfake) images vs. real ones** in a snap! Whether you’re a researcher, journalist, or simply curious, this project empowers you with:
 
----
-
-## System / Software requirements
-
-* Python 3.8 – 3.11 recommended
-* 8+ GB RAM (more helpful for training)
-* GPU recommended (CUDA-compatible) for faster training
+- ⚡ **Lightning-fast** MobileNetV3-Large backbone for real-time predictions.
+- 📓 A comprehensive Jupyter notebook for training & evaluation.
+- 🌈 Modern, interactive Streamlit web app to test images instantly.
+- 📚 Straightforward setup and data organization guide.
 
 ---
 
-## Python environment setup (step-by-step)
+## 🔗 Quick Access
 
-**Linux / macOS**
+- [`Updated_Training_Notebook_Final.ipynb`](./Updated_Training_Notebook_Final.ipynb) — Full training & evaluation workflow
+- [`app.py`](./app.py) — The Streamlit web interface
+- [`models/`](./models) — Pretrained model checkpoints
+- [`data/`](./data) — Your dataset root (see structure below)
+- [`requirements.txt`](./requirements.txt) — All required Python packages
+
+---
+
+## 🖥️ System Requirements
+
+- **Python** 3.8 – 3.11 (recommended)
+- **8+ GB RAM** (more = smoother training)
+- **GPU (CUDA)** highly recommended for speed
+
+---
+
+## ⚙️ Quickstart in Minutes
+
+### Linux / macOS
 
 ```bash
-# 1. create and activate venv
+# 1. Create & activate a virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# 2. upgrade pip and install deps
+# 2. Upgrade pip & install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-**Windows (PowerShell)**
+### Windows (PowerShell)
 
 ```powershell
 python -m venv venv
@@ -55,11 +62,11 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-**Note on PyTorch:** If you plan to use GPU, visit [https://pytorch.org](https://pytorch.org) to get the exact `pip` or `conda` install command that matches your CUDA version.
+> **🐍 PyTorch tip:** For GPU, get the exact install command for your CUDA version from [pytorch.org](https://pytorch.org/).
 
 ---
 
-## `requirements.txt` (example)
+## 📝 Example `requirements.txt`
 
 ```
 torch
@@ -73,14 +80,13 @@ pandas
 opencv-python
 tqdm
 ```
-
-Add or pin versions as needed (e.g. `torch==2.2.0`), depending on your environment.
+> Pin versions as needed for reproducibility (e.g., `torch==2.2.0`).
 
 ---
 
-## Dataset structure
+## 🗂️ Dataset Structure
 
-Organize your dataset like this:
+Organize your data like this:
 
 ```
 data/
@@ -101,22 +107,23 @@ data/
     fake/
 ```
 
-If you have a single image folder with labels in a CSV, adapt the loader or create a small script to split them into class subfolders.
+If all images are in one folder, use a script to split them into `real` and `fake` subfolders.
 
 ---
 
-## Preprocessing
+## 🖼️ Image Preprocessing
 
-* Resize images to **128×128** pixels (as used in the project).
-* Convert images to PyTorch tensors.
-* Normalize using ImageNet mean/std (recommended):
+- **Resize:** 128×128 px
+- **To tensor**
+- **Normalize:** _ImageNet mean & std_
+  - mean = `[0.485, 0.456, 0.406]`
+  - std  = `[0.229, 0.224, 0.225]`
 
-  * mean = `[0.485, 0.456, 0.406]`
-  * std  = `[0.229, 0.224, 0.225]`
-
-Example `torchvision.transforms` pipeline:
+Sample transform:
 
 ```python
+import torchvision.transforms as transforms
+
 transforms.Compose([
     transforms.Resize((128,128)),
     transforms.ToTensor(),
@@ -124,14 +131,13 @@ transforms.Compose([
 ])
 ```
 
-**Optional optimizations**
-
-* Precompute feature maps and save them as `.npy` files to speed up training iterations.
-* Use `torch.utils.data.DataLoader` with `num_workers>0` for parallel data loading.
+**Pro tips:**
+- Use `DataLoader` with `num_workers>0` for speed.
+- For very large datasets, precompute features as `.npy` files.
 
 ---
 
-## Training (step-by-step)
+## 🏋️‍♂️ Train Your Own Deepfake Detector!
 
 Open the notebook:
 
@@ -139,92 +145,89 @@ Open the notebook:
 jupyter notebook Updated_Training_Notebook_Final.ipynb
 ```
 
-Run the cells in order. The notebook covers:
+1. **Set up** (imports, device, seed)
+2. **Load your dataset** with transforms
+3. **Define the MobileNetV3-Large model** (swap final layer for binary classification)
+4. **Train** (loss/accuracy, optimizer, scheduler)
+5. **Save** your best model to `models/`
 
-1. Importing libraries and setting up device (CPU/GPU).
-2. Loading the dataset and applying transforms.
-3. Defining the MobileNetV3-Large model and replacing the classifier head for binary classification.
-4. Training loop with loss calculation, optimizer step, and validation.
-5. Saving the best checkpoint in `models/` (e.g., `best_model.pth`).
-
-![Training Loss Curve](images/training_loss.png)
-
----
-
-## Evaluation
-
-The notebook includes evaluation cells that compute:
-
-* Accuracy
-* Precision, Recall, F1-score
-* Confusion matrix
-
-Make sure to point the evaluation cell to your saved checkpoint (e.g., `models/best_model.pth`).
-
-![Confusion Matrix](images/confusion_matrix.png)
+<p align="center">
+  <img src="images/training_loss.png" alt="Training Loss Curve" width="500"/>
+</p>
 
 ---
 
-## Streamlit frontend (run locally)
+## 📈 Evaluate & Understand Results
 
-**Run the app**
+Notebook provides:
+
+- **Accuracy**
+- **Precision, Recall, F1**
+- **Confusion Matrix**
+- Load your best checkpoint (e.g., `models/best_model.pth`).
+
+<p align="center">
+  <img src="images/confusion_matrix.png" alt="Confusion Matrix" width="450"/>
+</p>
+
+---
+
+## 🌐 Try the Web App — Detect Deepfakes in Seconds!
 
 ```bash
 streamlit run app.py
 ```
 
-**What `app.py` should implement**
+**What can you do?**
 
-* Simple UI: file uploader, `Predict` button, display image and predicted label with probability.
-* Internally: call the same preprocessing as used during training, load the saved model checkpoint, run inference, and show the result.
-* Accept common image types: `.jpg`, `.jpeg`, `.png`.
+- Upload `.jpg`, `.jpeg`, or `.png` images
+- Predict if the image is Real or GAN-generated (deepfake)
+- See probability & a visual bar chart
 
-**Example UX flow**
+**How it works:**
 
-1. Open `http://localhost:8501` in your browser.
-2. Upload image.
-3. The app preprocesses + runs model.
-4. Show result: `Real (0.87)` or `GAN-generated (0.13)` and optionally a bar chart of class probabilities.
+1. Visit [http://localhost:8501](http://localhost:8501)
+2. Upload your image
+3. Instantly get results: `Real (0.87)` or `GAN-generated (0.13)`!
 
-![Prediction Example](images/prediction_example.png)
-
----
-
-## Troubleshooting
-
-**Model predicts everything as one class**
-
-* Confirm dataset folder labels and dataset loader mapping (class -> index).
-* Try a smaller learning rate.
-* Check normalization values.
-
-**GPU not found or CUDA errors**
-
-* Make sure PyTorch build matches your CUDA version.
-* If GPU unavailable, run on CPU by setting `device = 'cpu'` in the notebook.
-
-**Slow data loading**
-
-* Increase `num_workers` in DataLoader.
-* Use precomputed `.npy` features.
-* Ensure images are stored on a fast disk (SSD preferable).
+<p align="center">
+  <img src="images/prediction_example.png" alt="Prediction Example" width="500"/>
+</p>
 
 ---
 
-## Notes & Improvements
+## 🛠️ Troubleshooting & Tips
 
-* Extend to video: perform framewise detection + temporal smoothing.
-* Multimodal detection: combine multiple cues for manipulated media.
-* Adversarial robustness: incorporate adversarial training or anomaly detection.
-
----
-
-## Contribution & Contact
-
-For questions or collaboration, contact:
-
-* Ammu Elizabeth Alexander — [ammuelizabeth19@gmail.com](mailto:ammuelizabeth19@gmail.com)
+- **Only one class predicted?**
+  - Double-check folder structure, normalization, or try lowering the learning rate.
+- **CUDA/GPU errors?**
+  - Make sure your PyTorch build matches your CUDA version.
+  - To use CPU: `device = 'cpu'`.
+- **Slow loading?**
+  - Increase `num_workers` in DataLoader, use SSD storage, or precompute features.
 
 ---
 
-Thank you — run `streamlit run app.py` to launch the interface.
+## 💡 Dream Big — Extend This Project!
+
+- **Video:** Detect deepfakes in video frames + temporal smoothing
+- **Multimodal:** Combine with audio/text for deepfake detection
+- **Adversarial robustness:** Try adversarial training or anomaly detection
+
+---
+
+## 🤝 Questions & Contributions
+
+**Let's connect or collaborate!**
+
+- Ammu Elizabeth Alexander — [ammuelizabethalexander@gmail.com](mailto:ammuelizabethalexander@gmail.com)
+- Anakha Prakash — [anakhaprakash229@gmail.com](mailto:anakhaprakash229@gmail.com)
+- Aiswrya Josy — [aiswaryajosy@gmail.com](mailto:aiswaryajosy@gmail.com)
+- Abin Joseph — [abinkjoseph2004@gmail.com](mailto:abinkjoseph2004@gmail.com)
+
+---
+
+<p align="center">
+  <b>🌟 Thank you for exploring the Deepfake Detection Web Application!<br>
+  Launch your own detector now: <code>streamlit run app.py</code></b>
+</p>
